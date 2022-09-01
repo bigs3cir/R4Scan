@@ -113,6 +113,7 @@ func newVMess(urls *url.URL, rawUrl string) (proxy *Proxy, err error) {
 	var (
 		alterId int
 		port    int
+		host    []string
 	)
 
 	link, err := util.ParseVmess(rawUrl)
@@ -124,7 +125,19 @@ func newVMess(urls *url.URL, rawUrl string) (proxy *Proxy, err error) {
 	outBounds.Protocol = "vmess"
 
 	streamSetting := &vdata.StreamSettings{}
-	streamSetting.Network = link.Net
+	streamSetting.Network = strings.ToLower(link.Net)
+
+	if link.Host != "" {
+		if strings.Contains(link.Host, ",") {
+			for _, v := range strings.Split(link.Host, ",") {
+				if v = strings.TrimSpace(v); v != "" {
+					host = append(host, v)
+				}
+			}
+		} else {
+			host = append(host, link.Host)
+		}
+	}
 
 	switch strings.ToLower(link.Net) {
 	case "tcp":
@@ -132,17 +145,12 @@ func newVMess(urls *url.URL, rawUrl string) (proxy *Proxy, err error) {
 		if link.Type == "http" {
 			streamSetting.TCPSettings.TCPHeader = &stream.TCPHeader{}
 			streamSetting.TCPSettings.TCPHeader.Type = "http"
-
-			if link.Path != "" || link.Host != "" {
-				streamSetting.TCPSettings.TCPHeader.Request = &stream.TCPHeaderRequest{}
-			}
-
-			path, host := strings.Split(link.Path, ","), strings.Split(link.Host, ",")
-			if len(path) > 0 {
-				streamSetting.TCPSettings.TCPHeader.Request.Path = path
-			}
+			streamSetting.TCPSettings.TCPHeader.Request = &stream.TCPHeaderRequest{}
 			if len(host) > 0 {
 				streamSetting.TCPSettings.TCPHeader.Request.Headers = map[string][]string{"Host": host}
+			}
+			if link.Path != "" {
+				streamSetting.TCPSettings.TCPHeader.Request.Path = []string{link.Path}
 			}
 		}
 	case "kcp":
@@ -151,22 +159,21 @@ func newVMess(urls *url.URL, rawUrl string) (proxy *Proxy, err error) {
 			streamSetting.KCPSettings.Header = &stream.KCPHeader{Type: link.Type}
 		}
 	case "ws":
-		if link.Path != "" || link.Host != "" {
+		if len(host) > 0 || link.Path != "" {
 			streamSetting.WSSettings = &stream.WSSettings{}
+			if len(host) > 0 {
+				streamSetting.WSSettings.Headers = map[string]string{"Host": host[0]}
+			}
 			if link.Path != "" {
 				streamSetting.WSSettings.Path = link.Path
-			}
-			if link.Host != "" {
-				streamSetting.WSSettings.Headers = map[string]string{"Host": link.Host}
 			}
 		}
 	case "h2", "http":
 		streamSetting.HTTPSettings = &stream.HTTPSettings{}
-		host := strings.Split(link.Host, ",")
 		if len(host) < 1 {
 			return nil, fmt.Errorf("parse error: invalid http/2 host")
 		}
-		streamSetting.HTTPSettings.Headers = map[string][]string{"Host": host}
+		streamSetting.HTTPSettings.Host = host
 		streamSetting.HTTPSettings.Path = link.Path
 	}
 
@@ -249,5 +256,6 @@ func newVMess(urls *url.URL, rawUrl string) (proxy *Proxy, err error) {
 		Url:    urls,
 		VMess:  outBounds,
 	}
+
 	return
 }

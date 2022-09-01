@@ -33,7 +33,7 @@ type StreamSettings struct {
 	KCPSettings  *stream.KCPSettings  `json:"kcpSettings,omitempty" validate:"omitempty,excluded_unless=Network kcp" errMsg:"invalid stream kcpSettings"`
 	WSSettings   *stream.WSSettings   `json:"wsSettings,omitempty" validate:"omitempty,excluded_unless=Network ws" errMsg:"invalid stream wsSettings"`
 	HTTPSettings *stream.HTTPSettings `json:"httpSettings,omitempty" validate:"omitempty,excluded_unless=Network http" errMsg:"invalid stream httpSettings"`
-	QUICSettings *stream.HTTPSettings `json:"quicSettings,omitempty" validate:"omitempty,excluded_unless=Network quic" errMsg:"invalid stream quicSettings"`
+	QUICSettings *stream.QUICSettings `json:"quicSettings,omitempty" validate:"omitempty,excluded_unless=Network quic" errMsg:"invalid stream quicSettings"`
 }
 
 type MuxSettings struct {

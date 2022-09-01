@@ -33,7 +33,7 @@ func (proxy *Proxy) TrojanDialer(timeout time.Duration) fasthttp.DialFunc {
 
 	configRaw, _ := json.MarshalIndent(map[string][]interface{}{
 		"outbounds": {
-			proxy.VMess,
+			proxy.Trojan,
 		},
 	}, "", "  ")
 
@@ -181,7 +181,7 @@ func newTrojan(urls *url.URL) (proxy *Proxy, err error) {
 		Port:   port,
 		Schema: "TROJAN",
 		Url:    urls,
-		VMess:  outBounds,
+		Trojan: outBounds,
 	}
 
 	return

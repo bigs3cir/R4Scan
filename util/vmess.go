@@ -7,6 +7,10 @@ import (
 	"strings"
 )
 
+//Original code from vmessping
+//Minor modifications were made to accommodate more cases
+//https://github.com/v2fly/vmessping
+
 type VmessLink struct {
 	Ver      string      `json:"-"`
 	Add      string      `json:"add"`
@@ -112,6 +116,7 @@ func newVnVmess(vmess string) (*VmessLink, error) {
 }
 
 func newRkVmess(vmess string) (*VmessLink, error) {
+
 	if !strings.HasPrefix(vmess, "vmess://") {
 		return nil, fmt.Errorf("vmess unreconized: %s", vmess)
 	}

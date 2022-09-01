@@ -23,6 +23,8 @@ type Proxy struct {
 	ShadowSocks  ShadowSocks
 	ShadowSocksR ShadowSocksR
 	VMess        v2ray.OutBounds
+	VLess        v2ray.OutBounds
+	Trojan       v2ray.OutBounds
 }
 
 var SchemaList = map[string]struct{}{
@@ -35,6 +37,7 @@ var SchemaList = map[string]struct{}{
 	"SS":        {},
 	"SSR":       {},
 	"VMESS":     {},
+	"VLESS":     {},
 	"TROJAN":    {},
 	"TROJAN-GO": {},
 }
@@ -84,6 +87,8 @@ func (proxy *Proxy) Dialer(timeout time.Duration) fasthttp.DialFunc {
 		return proxy.ShadowSocksRDialer(timeout)
 	case "VMESS":
 		return proxy.VMessDialer(timeout)
+	case "VLESS":
+		return proxy.VLessDialer(timeout)
 	case "TROJAN", "TROJAN-GO":
 		return proxy.TrojanDialer(timeout)
 	default:
@@ -117,6 +122,8 @@ func NewProxy(rawUrl string) (proxy *Proxy, err error) {
 		return newShadowSocksR(urls, rawUrl)
 	case "VMESS":
 		return newVMess(urls, rawUrl)
+	case "VLESS":
+		return newVLess(urls)
 	case "TROJAN":
 		return newTrojan(urls)
 	}

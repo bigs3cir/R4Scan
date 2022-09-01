@@ -25,7 +25,7 @@ func init() {
 }
 
 func main() {
-	
+
 	arg.MustParse(&args)
 	if args.Version {
 		fmt.Println(version())
@@ -118,7 +118,7 @@ func startUp() {
 	//</html>
 	//`
 
-	proxys, err := http.NewProxy("vmess://eyJhZGQiOiJhaTEuZ3QtdXAuY29tIiwiaG9zdCI6IiIsImlkIjoiRTJGRDY1RTgtODBDRi01MTI3LTkwQzItNjU2MTM3MDk5NzBBIiwibmV0IjoidGNwIiwicGF0aCI6IiIsInBvcnQiOiIxMDQwMSIsInBzIjoiS1JcdTRlMjhcdTk3ZTlcdTU2ZmQxIiwidGxzIjoiIiwidHlwZSI6Im5vbmUiLCJhaWQiOjAsInYiOjJ9")
+	proxys, err := http.NewProxy("vless://4ce4eec8-6319-4af3-bcad-91658a176445@127.0.0.1:9999?encryption=none&security=tls&sni=9.com&type=tcp&headerType=none#a\n")
 	if err != nil {
 		log.Fatal(err)
 		os.Exit(1)

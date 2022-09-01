@@ -23,7 +23,7 @@ type Client struct {
 func NewClient() *Client {
 	return &Client{
 		method:  "GET",
-		retry:   5,
+		retry:   1,
 		timeout: time.Second * 5,
 		client: &fasthttp.Client{
 			DialDualStack:                 true,
